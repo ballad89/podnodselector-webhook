@@ -98,17 +98,12 @@ func validationRequired(ignoredList []string, metadata *metav1.ObjectMeta) bool 
 	return required
 }
 
-
-
-
-
-
 func createPatch(nodeSelectors map[string]string) ([]byte, error) {
 	var patch []patchOperation
 
 	patch = append(patch, patchOperation{
-		Op: "add",
-		Path: "/spec/nodeSelector",
+		Op:    "replace",
+		Path:  "/spec/nodeSelector",
 		Value: nodeSelectors,
 	})
 
@@ -238,8 +233,8 @@ func (whsvr *WebhookServer) validate(ar *v1beta1.AdmissionReview) *v1beta1.Admis
 func (whsvr *WebhookServer) mutate(ar *v1beta1.AdmissionReview) *v1beta1.AdmissionResponse {
 	req := ar.Request
 	var (
-		objectMeta                            *metav1.ObjectMeta
-		resourceNamespace, resourceName       string
+		objectMeta                      *metav1.ObjectMeta
+		resourceNamespace, resourceName string
 	)
 
 	klog.Infof("AdmissionReview for Kind=%v, Namespace=%v Name=%v (%v) UID=%v patchOperation=%v UserInfo=%v",

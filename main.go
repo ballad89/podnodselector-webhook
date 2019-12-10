@@ -22,13 +22,16 @@ func main() {
 	flag.BoolVar(&parameters.inCluster, "inCluster", false, "Running in cluster")
 	flag.Parse()
 
+	listenAddr := fmt.Sprintf(":%v", parameters.port)
+
 	whsvr := &WebhookServer{
 		server: &http.Server{
-			Addr: fmt.Sprintf(":%v", parameters.port),
+			Addr: listenAddr,
 		},
 	}
 
 	kubeClientSet, kubeClientSetErr := KubeClientSet(parameters.inCluster)
+
 	if kubeClientSetErr != nil {
 		klog.Fatal(kubeClientSetErr)
 	}
@@ -62,7 +65,7 @@ func main() {
 
 	}()
 
-	klog.Info("Server started")
+	klog.Infof("Server started on %s", listenAddr)
 
 	// listening OS shutdown singal
 	signalChan := make(chan os.Signal, 1)
