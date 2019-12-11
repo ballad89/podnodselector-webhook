@@ -12,6 +12,10 @@ import (
 	"k8s.io/klog"
 )
 
+func health(w http.ResponseWriter, r *http.Request) {
+	w.Write([]byte("ok"))
+}
+
 func main() {
 	var parameters WhSvrParameters
 
@@ -48,6 +52,7 @@ func main() {
 	mux := http.NewServeMux()
 	mux.HandleFunc("/mutate", whsvr.serve)
 	mux.HandleFunc("/validate", whsvr.serve)
+	mux.HandleFunc("/health", health)
 	whsvr.server.Handler = mux
 
 	// start webhook server in new routine
